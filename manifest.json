@@ -1,0 +1,20 @@
+{
+  "name": "get-token-from-cookie",
+  "description": "Get your token from a given cookie",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_icon": "icon.png",
+    "default_popup": "hello.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "host_permissions": [
+    "*://app.salesys.se/"
+  ],
+  "permissions": [
+    "cookies",
+    "activeTab"
+  ]
+}
