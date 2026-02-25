@@ -12,7 +12,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     getCookieValue()
       .then(value => sendResponse({ value }))
       .catch(err => {
-        console.error('cookie fetch failed', err);
+        console.error('Error getting cookie: ', err);
         sendResponse({ value: null });
       });
 
@@ -23,7 +23,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     getCookieValue()
       .then(value => sendResponse({ value }))
       .catch(err => {
-        console.error('cookie fetch failed (copy)', err);
+        console.error('Error copying cookie: ', err);
         sendResponse({ value: null });
       });
 

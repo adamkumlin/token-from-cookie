@@ -29,10 +29,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// wire the copy button instead of doing it immediately
-const copyBtn = document.getElementById('copy-button');
-if (copyBtn) {
-  copyBtn.addEventListener('click', () => {
+const copyButton = document.getElementById('copy-button');
+if (copyButton) {
+  copyButton.addEventListener('click', () => {
     chrome.runtime.sendMessage({ cmd: 'copyCookie' }, async (response) => {
       if (chrome.runtime.lastError) {
         console.error("Error: ", chrome.runtime.lastError);

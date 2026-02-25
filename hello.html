@@ -7,22 +7,11 @@
 </head>
 
 <body>
-  <div id="cookie-container">
-    <input id="cookie-value-container" readonly type="text" />
-    <div role="button" id="copy-button">Copy to clipboard</div>
+  <div style="width: 100%; display: flex; flex-direction: row; align-items: center; gap: 4px;">
+    <div role="button" id="copy-button" style="cursor: pointer;"><img src="images/copied-icon.svg" style="height: 20px; width: 20px;"/></div>
+    <input id="cookie-value-container" style="height: 20px;" readonly type="text" />
   </div>
   <script src="popup.js"></script>
-
-  <style>
-    #cookie-container {
-      width: 100%;
-    }
-
-    #copy-button {
-      cursor: pointer;
-
-    }
-  </style>
 </body>
 
 </html>
