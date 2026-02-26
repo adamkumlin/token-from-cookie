@@ -1,11 +1,22 @@
 
-function renderCookieValue(cookieValue) {
-  const container = document.getElementById("cookie-value-container");
-  if (!container) {
+function renderCookieValues(cookieValues) {
+  const authTokenContainer = document.getElementById("auth-token-value-container");
+  const userIdContainer = document.getElementById("userid-value-container");
+  if (!authTokenContainer || !userIdContainer) {
     return
   };
 
-  container.value = cookieValue;
+  authTokenContainer.value = cookieValues.authToken;
+  userIdContainer.value = cookieValues.userId;
+}
+
+function renderLocalStorageValues(localStorageValues) {
+  const projectIdContainer = document.getElementById("projectid-value-container");
+  if (!projectIdContainer) {
+    return
+  };
+
+  projectIdContainer.value = localStorageValues;
 }
 
 async function copyCookieValueToClipboard(cookieValue) {
@@ -19,20 +30,43 @@ async function copyCookieValueToClipboard(cookieValue) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  chrome.runtime.sendMessage({ cmd: 'getCookie' }, (response) => {
+  chrome.runtime.sendMessage({ cmd: 'getCookies' }, (response) => {
     if (chrome.runtime.lastError) {
       console.error("Error: ", chrome.runtime.lastError);
       return;
     }
 
-    renderCookieValue(response.value);
+    renderCookieValues(response.value);
+  });
+
+  chrome.runtime.sendMessage({ cmd: "getLocalStorage" }, (response) => {
+    if (chrome.runtime.lastError) {
+      console.error("Error: ", chrome.runtime.lastError);
+      return;
+    }
+
+    renderLocalStorageValues(response.value);
   });
 });
 
-const copyButton = document.getElementById('copy-button');
-if (copyButton) {
-  copyButton.addEventListener('click', () => {
-    chrome.runtime.sendMessage({ cmd: 'copyCookie' }, async (response) => {
+const copyAuthTokenButton = document.getElementById('copy-auth-token-button');
+if (copyAuthTokenButton) {
+  copyAuthTokenButton.addEventListener('click', () => {
+    chrome.runtime.sendMessage({ cmd: 'copyAuthToken' }, async (response) => {
+      if (chrome.runtime.lastError) {
+        console.error("Error: ", chrome.runtime.lastError);
+        return;
+      }
+
+      await copyCookieValueToClipboard(response.value);
+    });
+  });
+}
+
+const copyUserIdButton = document.getElementById('copy-userid-button');
+if (copyUserIdButton) {
+  copyUserIdButton.addEventListener('click', () => {
+    chrome.runtime.sendMessage({ cmd: 'copyUserId' }, async (response) => {
       if (chrome.runtime.lastError) {
         console.error("Error: ", chrome.runtime.lastError);
         return;

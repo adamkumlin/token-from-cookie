@@ -11,10 +11,12 @@
     "service_worker": "background.js"
   },
   "host_permissions": [
-    "*://app.salesys.se/"
+    "https://app.salesys.se/*"
   ],
   "permissions": [
     "cookies",
-    "activeTab"
+    "activeTab",
+    "storage",
+    "scripting"
   ]
 }

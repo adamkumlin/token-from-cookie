@@ -7,9 +7,26 @@
 </head>
 
 <body>
-  <div style="width: 100%; display: flex; flex-direction: row; align-items: center; gap: 4px;">
-    <div role="button" id="copy-button" style="cursor: pointer;"><img src="images/copied-icon.svg" style="height: 20px; width: 20px;"/></div>
-    <input id="cookie-value-container" style="height: 20px;" readonly type="text" />
+  <div>
+    <h2>Current Project ID</h2>
+    <div style="width: 100%; display: flex; flex-direction: row; align-items: center; gap: 4px;">
+      <div role="button" id="copy-projectid-button" style="cursor: pointer;"><img src="images/copied-icon.svg" style="height: 20px; width: 20px;"/></div>
+      <input id="projectid-value-container" style="height: 20px;" readonly type="text" />
+    </div>
+  </div>
+  <div>
+    <h2>User ID</h2>
+    <div style="width: 100%; display: flex; flex-direction: row; align-items: center; gap: 4px;">
+      <div role="button" id="copy-userid-button" style="cursor: pointer;"><img src="images/copied-icon.svg" style="height: 20px; width: 20px;"/></div>
+      <input id="userid-value-container" style="height: 20px;" readonly type="text" />
+    </div>
+  </div>
+  <div>
+    <h2>Authentication token</h2>
+    <div style="width: 100%; display: flex; flex-direction: row; align-items: center; gap: 4px;">
+      <div role="button" id="copy-auth-token-button" style="cursor: pointer;"><img src="images/copied-icon.svg" style="height: 20px; width: 20px;"/></div>
+      <input id="auth-token-value-container" style="height: 20px;" readonly type="text" />
+    </div>
   </div>
   <script src="popup.js"></script>
 </body>

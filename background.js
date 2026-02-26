@@ -1,15 +1,23 @@
-async function getCookieValue() {
-  const cookie = await chrome.cookies.get({
+async function getCookieValues() {
+  const authToken = await chrome.cookies.get({
     name: "s2_utoken",
     url: "https://app.salesys.se/"
   });
 
-  return cookie?.value ? `Bearer ${cookie.value}` : null;
+  const userId = await chrome.cookies.get({
+    name: "s2_uid",
+    url: "https://app.salesys.se/"
+  });
+
+  return {
+    authToken: authToken ? `Bearer ${authToken.value}` : null,
+    userId: userId.value
+  };
 }
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  if (msg && msg.cmd === 'getCookie') {
-    getCookieValue()
+  if (msg && msg.cmd === 'getCookies') {
+    getCookieValues()
       .then(value => sendResponse({ value }))
       .catch(err => {
         console.error('Error getting cookie: ', err);
@@ -19,9 +27,48 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     return true;
   }
 
-  if (msg && msg.cmd === 'copyCookie') {
-    getCookieValue()
-      .then(value => sendResponse({ value }))
+  if (msg && msg.cmd === 'getLocalStorage') {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.scripting.executeScript({
+        target: { tabId: tabs[0].id },
+        func: () => localStorage.getItem("currentProjectId")
+      }).then((results) => {
+        const value = results[0].result;
+        sendResponse({ value });
+      }).catch(err => {
+        console.error("Error reading localStorage value:", err);
+        sendResponse({ value: null });
+      });
+    });
+
+    return true;
+  }
+
+  if (msg && msg.cmd === 'copyProjectId') {
+    getCookieValues()
+      .then(value => sendResponse({ value: value.userId }))
+      .catch(err => {
+        console.error('Error copying localStorage value: ', err);
+        sendResponse({ value: null });
+      });
+
+    return true;
+  }
+
+  if (msg && msg.cmd === 'copyAuthToken') {
+    getCookieValues()
+      .then(value => sendResponse({ value: value.authToken }))
+      .catch(err => {
+        console.error('Error copying cookie: ', err);
+        sendResponse({ value: null });
+      });
+
+    return true;
+  }
+
+  if (msg && msg.cmd === 'copyUserId') {
+    getCookieValues()
+      .then(value => sendResponse({ value: value.userId }))
       .catch(err => {
         console.error('Error copying cookie: ', err);
         sendResponse({ value: null });
