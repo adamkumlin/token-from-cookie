@@ -13,6 +13,19 @@
   "host_permissions": [
     "https://app.salesys.se/*"
   ],
+  "content_scripts": [
+    {
+      "matches": ["https://app.salesys.se/*"],
+      "js": ["scripts/injected.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["https://app.salesys.se/*"],
+      "js": ["scripts/content.js"],
+      "run_at": "document_start"
+    }
+  ],
   "permissions": [
     "cookies",
     "activeTab",

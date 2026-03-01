@@ -1,29 +1,22 @@
+function renderValue(value, containerSelector) {
+  if (!value) {
+    return;
+  }
 
-function renderCookieValues(cookieValues) {
-  const authTokenContainer = document.getElementById("auth-token-value-container");
-  const userIdContainer = document.getElementById("userid-value-container");
-  if (!authTokenContainer || !userIdContainer) {
-    return
-  };
+  const container = document.querySelector(containerSelector);
 
-  authTokenContainer.value = cookieValues.authToken;
-  userIdContainer.value = cookieValues.userId;
-}
+  if (!container) {
+    return;
+  }
 
-function renderLocalStorageValues(localStorageValues) {
-  const projectIdContainer = document.getElementById("projectid-value-container");
-  if (!projectIdContainer) {
-    return
-  };
-
-  projectIdContainer.value = localStorageValues.projectId || '(inget projekt valt)';
+  container.value = value;
 }
 
 async function copyValueToClipboard(value) {
   if (!value) {
     return;
   }
-  
+
   const clipboard = navigator.clipboard;
   await clipboard.writeText(value)
 }
@@ -35,7 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    renderCookieValues(response.value);
+    renderValue(response.value.authToken, "#auth-token-value-container");
+    renderValue(response.value.userId, "#userid-value-container");
   });
 
   chrome.runtime.sendMessage({ cmd: "getLocalStorage" }, (response) => {
@@ -44,7 +38,16 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    renderLocalStorageValues(response.value);
+    renderValue(response.value.projectId, "#projectid-value-container");
+  });
+
+  chrome.runtime.sendMessage({ cmd: 'getOrganizationId' }, (response) => {
+    if (chrome.runtime.lastError) {
+      console.error("Error: ", chrome.runtime.lastError);
+      return;
+    }
+
+    renderValue(response.value, "#organizationid-value-container");
   });
 });
 

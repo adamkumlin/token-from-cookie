@@ -15,6 +15,8 @@ async function getCookieValues() {
   };
 }
 
+let organizationId = null;
+
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg && msg.cmd === 'getCookies') {
     getCookieValues()
@@ -54,6 +56,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg && msg.cmd === 'copyProjectId') {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (!tabs) {
+        sendResponse({ value: null });
         return;
       }
       chrome.scripting.executeScript({
@@ -92,6 +95,16 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         sendResponse({ value: null });
       });
 
+    return true;
+  }
+
+  if (msg.cmd === 'setOrganizationId') {
+    organizationId = msg.data;
+    sendResponse(null);
+  }
+
+  if (msg.cmd === 'getOrganizationId') {
+    sendResponse({ value: organizationId.data });
     return true;
   }
 });
