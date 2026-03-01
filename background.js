@@ -29,12 +29,19 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
   if (msg && msg.cmd === 'getLocalStorage') {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (!tabs) {
+        return;
+      }
       chrome.scripting.executeScript({
         target: { tabId: tabs[0].id },
         func: () => localStorage.getItem("currentProjectId")
       }).then((results) => {
-        const value = results[0].result;
-        sendResponse({ value });
+        const projectId = results[0].result;
+        sendResponse({
+          value: {
+            projectId
+          }
+        });
       }).catch(err => {
         console.error("Error reading localStorage value:", err);
         sendResponse({ value: null });
@@ -45,12 +52,23 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   }
 
   if (msg && msg.cmd === 'copyProjectId') {
-    getCookieValues()
-      .then(value => sendResponse({ value: value.userId }))
-      .catch(err => {
-        console.error('Error copying localStorage value: ', err);
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (!tabs) {
+        return;
+      }
+      chrome.scripting.executeScript({
+        target: { tabId: tabs[0].id },
+        func: () => localStorage.getItem("currentProjectId")
+      }).then((results) => {
+        const projectId = results[0].result;
+        sendResponse({
+          value: projectId
+        });
+      }).catch(err => {
+        console.error("Error reading localStorage value:", err);
         sendResponse({ value: null });
       });
+    });
 
     return true;
   }

@@ -16,17 +16,16 @@ function renderLocalStorageValues(localStorageValues) {
     return
   };
 
-  projectIdContainer.value = localStorageValues;
+  projectIdContainer.value = localStorageValues.projectId || '(inget projekt valt)';
 }
 
-async function copyCookieValueToClipboard(cookieValue) {
-  if (!cookieValue) {
+async function copyValueToClipboard(value) {
+  if (!value) {
     return;
   }
-
+  
   const clipboard = navigator.clipboard;
-
-  await clipboard.writeText(cookieValue)
+  await clipboard.writeText(value)
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -58,7 +57,7 @@ if (copyAuthTokenButton) {
         return;
       }
 
-      await copyCookieValueToClipboard(response.value);
+      await copyValueToClipboard(response.value);
     });
   });
 }
@@ -72,7 +71,21 @@ if (copyUserIdButton) {
         return;
       }
 
-      await copyCookieValueToClipboard(response.value);
+      await copyValueToClipboard(response.value);
+    });
+  });
+}
+
+const copyProjectIdButton = document.getElementById('copy-projectid-button');
+if (copyAuthTokenButton) {
+  copyProjectIdButton.addEventListener('click', () => {
+    chrome.runtime.sendMessage({ cmd: 'copyProjectId' }, async (response) => {
+      if (chrome.runtime.lastError) {
+        console.error("Error: ", chrome.runtime.lastError);
+        return;
+      }
+
+      await copyValueToClipboard(response.value);
     });
   });
 }
