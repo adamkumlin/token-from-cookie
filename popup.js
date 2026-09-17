@@ -92,3 +92,17 @@ if (copyAuthTokenButton) {
     });
   });
 }
+
+const copyOrganizationIdButton = document.getElementById('copy-organizationid-button');
+if (copyOrganizationIdButton) {
+  copyOrganizationIdButton.addEventListener('click', () => {
+    chrome.runtime.sendMessage({ cmd: 'copyOrganizationId' }, async (response) => {
+      if (chrome.runtime.lastError) {
+        console.error("Error: ", chrome.runtime.lastError);
+        return;
+      }
+
+      await copyValueToClipboard(response.value);
+    });
+  });
+}

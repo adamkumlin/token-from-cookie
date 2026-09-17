@@ -17,6 +17,25 @@ async function getCookieValues() {
 
 let organizationId = null;
 
+async function fetchOrganizationId() {
+  const { authToken } = await getCookieValues();
+
+  if (!authToken) {
+    return null;
+  }
+
+  const res = await fetch("https://app.salesys.se/api/users/organizations-v1/me", {
+    headers: { Authorization: authToken }
+  });
+
+  if (!res.ok) {
+    return null;
+  }
+
+  const data = await res.json();
+  return data.id;
+}
+
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg && msg.cmd === 'getCookies') {
     getCookieValues()
@@ -98,13 +117,30 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     return true;
   }
 
+  if (msg && msg.cmd === 'copyOrganizationId') {
+    (organizationId ? Promise.resolve(organizationId.data) : fetchOrganizationId())
+      .then(value => sendResponse({ value }))
+      .catch(err => {
+        console.error('Error fetching organization id: ', err);
+        sendResponse({ value: null });
+      });
+
+    return true;
+  }
+
   if (msg.cmd === 'setOrganizationId') {
     organizationId = msg.data;
     sendResponse(null);
   }
 
   if (msg.cmd === 'getOrganizationId') {
-    sendResponse({ value: organizationId.data });
+    (organizationId ? Promise.resolve(organizationId.data) : fetchOrganizationId())
+      .then(value => sendResponse({ value }))
+      .catch(err => {
+        console.error('Error fetching organization id: ', err);
+        sendResponse({ value: null });
+      });
+
     return true;
   }
 });
